@@ -1,7 +1,10 @@
 import { parseCSV } from "../src/basic-parser";
 import * as path from "path";
+import { tuple, z } from "zod";
 
 const PEOPLE_CSV_PATH = path.join(__dirname, "../data/people.csv");
+const PERSON_SCHEMA_CSV = path.join(__dirname, "../data/person_schema.csv");
+const NUMBER_SCHEMA_CSV = path.join(__dirname, "../data/numbers.csv");
 
 test("parseCSV yields arrays", async () => {
   const results = await parseCSV(PEOPLE_CSV_PATH);
@@ -65,4 +68,23 @@ test("parseCSV is case sensitive", async () => {
   const results = await parseCSV(PEOPLE_CSV_PATH);
 
   expect(results[12]).toEqual(["alice", "23"]);
+});
+
+test("schema validation works", async () => {
+  const PersonRowSchema = z.tuple([z.string(), z.coerce.number()]).transform(tuple => ({ name: tuple[0], age: tuple[1] }));
+  const results = await parseCSV(PERSON_SCHEMA_CSV, PersonRowSchema);
+  expect(results[0]).toEqual({ name: "Alice", age: 23 });
+  expect(results[1]).toEqual({ name: "Charlie", age: 25 });
+});
+
+test("schema validation numbers fail", async () => {
+  const NumberRowSchema = z.tuple([z.coerce.number().refine(val => val > 5), z.coerce.number().refine(val => val < 2)]).transform(tuple => ({ a: tuple[0], b: tuple[1] }));
+  await expect(parseCSV(NUMBER_SCHEMA_CSV, NumberRowSchema)).rejects.toThrow();
+});
+
+test("schema validation numbers work", async () => {
+  const NumberRowSchema2 = z.tuple([z.coerce.number().refine(val => val > 0), z.coerce.number().refine(val => val > 0)]).transform(tuple => ({ a: tuple[0], b: tuple[1] }));
+  const results = await parseCSV(NUMBER_SCHEMA_CSV, NumberRowSchema2);
+  expect(results[0]).toEqual({ a: 4, b: 1 });
+  expect(results[1]).toEqual({ a: 10, b: 28 });
 });
