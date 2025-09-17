@@ -32,16 +32,19 @@ The LLM got very specific with the types of errors as well as CSV formatting com
 ### 1340 Supplement
 
 - #### 1. Correctness
+I think generally I need to check for non-trivial inputs in fields such as the usage of commas or quotes. It should properly throw an error when validation fails and return an array of the correct output type specified in the inputted schema. It should return the default string output if no schema is specified/undefined. 
 
 - #### 2. Random, On-Demand Generation
+It would help for finding strange edge case interactions for inputs. The randomness might bring an interaction that we were not expected/aware of. 
 
 - #### 3. Overall experience, Bugs encountered and resolved
-#### Errors/Bugs:
+#### Errors/Bugs: 
 #### Tests:
 #### How To…
+This sprint was definitely more conceptual than most programming assignments I've done in the past/from other courses. A lot more design oriented. The main bug I had that aggravated me was trying to figure out the syntax for allowing both an array of array of strings if the schema is not specified or the array of the schema type if it is specified. I partially fixed it by actually thoroughly reading the Sprint and seeing that you can use a type variable but then I also had to go to the documentation afterwards to see what the syntax was for that.
 
 #### Team members and contributions (include cs logins):
 
-#### Collaborators (cslogins of anyone you worked with on this project and/or generative AI):
-#### Total estimated time it took to complete project:
-#### Link to GitHub Repo:  
+#### Collaborators (cslogins of anyone you worked with on this project and/or generative AI): LLM for the required parts
+#### Total estimated time it took to complete project: 5 hours
+#### Link to GitHub Repo: https://github.com/cs0320-f25/typescript-csv-kieranlamay
